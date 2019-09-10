@@ -1,61 +1,73 @@
-// Initialize list of words, pick random word from list
-const wordList = ["horse", "apple", "bushes", "comb", "police"];
-const targetWord = wordList[Math.floor(Math.random() * wordList.length)];
+$(document).ready(function () {
+    // Initialize list of words, pick random word from list
+    const wordList = ["horse", "apple", "bushes", "comb", "police"];
+    const targetWord = wordList[Math.floor(Math.random() * wordList.length)];
+    const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 
-// Grab div to hold the user interfacing text
-const blankSpace = document.getElementById("blanks");
+    // Grab div to hold the user interfacing text
+    const blankSpace = $(".blanks");
+    const guessIndicator = $(".guess-number");
 
-let blankStr = "";
-let guessCounter = 5;
-let wrongGuesses = []
+    let blankStr = "";
+    let guessCounter = 5;
+    let wrongGuesses = []
 
+    for (let i = 0; i < targetWord.length; i++) {
+        blankStr = blankStr + "_ ";
+    }
+    for (let i = 0; i < letters.length; i++){
+        var letterDisplay = $("<div>");
+        letterDisplay.addClass("lead col-2");
+        letterDisplay.attr("data-letter", letters[i], "style", "font-size: 32px")
+        letterDisplay.text(letters[i]);
+        $(".letters").append(letterDisplay);
+    }
+    blankSpace.text(blankStr);
+    guessIndicator.text("You have " + guessCounter + " more wrong guesses");
 
-console.log(targetWord);
-console.log(guessCounter);
+    $(document).keyup(function (event) {
+        let userGuess = event.key;
 
-for (let i = 0; i < targetWord.length; i++) {
-    blankStr = blankStr + "_ ";
-}
-
-blankSpace.textContent = blankStr;
-
-document.onkeyup = function (event) {
-    let userGuess = event.key;
-    console.log(userGuess);
-
-    if (targetWord.indexOf(userGuess) != -1) {
-        // console.log("in word");
-        let temp = blankStr.replace(/\s/g, '');
-        console.log('in', temp);
-        blankStr = "";
-        for (let i = 0; i < targetWord.length; i++) {
-            if (targetWord[i] === userGuess) {
-                blankStr = blankStr + userGuess + " ";
-            } else if (targetWord[i] != userGuess && temp[i] === "_") {
-                blankStr = blankStr + "_ ";
+        if (guessCounter > 1) {
+            if (targetWord.indexOf(userGuess) != -1) {
+                let temp = blankStr.replace(/\s/g, '');
+                blankStr = "";
+                for (let i = 0; i < targetWord.length; i++) {
+                    if (targetWord[i] === userGuess) {
+                        blankStr = blankStr + userGuess + " ";
+                    } else if (targetWord[i] != userGuess && temp[i] === "_") {
+                        blankStr = blankStr + "_ ";
+                    } else {
+                        blankStr = blankStr + temp[i] + " ";
+                    }
+                }
+                $('[data-letter=' + userGuess.toUpperCase() + ']').css({'color': 'green', 'font-weight': 'bold'});
+                blankSpace.text(blankStr);
+                if(targetWord == blankStr.replace(/\s/g, '')){
+                    alert("You Win!");
+                }
             } else {
-                blankStr = blankStr + temp[i] + " ";
+                guessCounterDown(userGuess);
+                console.log("wrong", guessCounter);
+                $('[data-letter=' + userGuess.toUpperCase() + ']').css({'color': 'red', 'text-decoration': 'line-through'});
+                guessIndicator.text("You have " + guessCounter + " more wrong guesses");
             }
-            // console.log('iter' + i, blankStr);
+        } else {
+            guessCounterDown(userGuess);
+            guessIndicator.text("You have " + guessCounter + " more wrong guesses");
+            alert("Ya lost!");
         }
-        console.log('out', blankStr);
-        blankSpace.textContent = blankStr;
-        // return blankStr;
-    } else {
-        console.log("not in word");
-        guessCounterDown(userGuess);
-        // return blankStr;
-    }
-}
+    });
 
-function guessCounterDown(guess) {
-    if (!wrongGuesses.includes(guess)) {
-        wrongGuesses.push(guess);
-        if (targetWord.indexOf(guess) === -1) {
-            guessCounter -= 1;
+    function guessCounterDown(guess) {
+        if (!wrongGuesses.includes(guess)) {
+            wrongGuesses.push(guess);
+            if (targetWord.indexOf(guess) === -1) {
+                guessCounter -= 1;
+            }
         }
     }
-}
+});
 
 // Pseudocode
 // -computer has a list of words for user to guess***
