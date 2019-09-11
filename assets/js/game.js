@@ -68,7 +68,7 @@ $(document).ready(function () {
                     }
                     // correctly guessed letters made green and bold in alphabet interface
                     $('[data-letter=' + userGuess.toUpperCase() + ']').css({
-                        'color': 'green',
+                        'color': 'white',
                         'font-weight': 'bold',
                     });
                     // write resulting string to page
