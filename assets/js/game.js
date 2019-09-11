@@ -7,16 +7,27 @@ $(document).ready(function () {
     // Grab div to hold the user interfacing text
     const blankSpace = $(".blanks");
     const guessIndicator = $(".guess-number");
+    const imgs = $(".images");
 
     // Set up dynamic variables to hold background data
     let blankStr = "";
-    let guessCounter = 5;
+    let guessCounter = 0;
     let wrongGuesses = [];
 
     // fill blank string with dashes(as place holders) and spaces(for legibility);
     for (let i = 0; i < targetWord.length; i++) {
         blankStr = blankStr + "_ ";
     }
+
+    let fruitPic = $('<img>');
+    fruitPic.addClass('img-responsive');
+    fruitPic.css({
+        'width': '100%',
+        'height': 'auto'
+    });
+    fruitPic.attr('src', 'assets/images/froot-' + guessCounter + '.jpeg')
+    imgs.append(fruitPic);
+
     //  create letter indicators to html;
     for (let i = 0; i < letters.length; i++) {
         var letterDisplay = $("<div>");
@@ -27,7 +38,7 @@ $(document).ready(function () {
     }
     // show those on page;
     blankSpace.text(blankStr);
-    guessIndicator.text("You have " + guessCounter + " more wrong guesses");
+    // guessIndicator.text("You have " + guessCounter + " more wrong guesses");
 
     // main user interaction function
     $(document).keyup(function (event) {
@@ -36,7 +47,7 @@ $(document).ready(function () {
         // handles non letter key presses
         if (letters.includes(userGuess.toUpperCase())) {
             // handles play vs loss state
-            if (guessCounter > 1) {
+            if (guessCounter < 5) {
                 if (targetWord.indexOf(userGuess) != -1) {
                     // hold temporary string of correctly guessed letters and dashes with no spaces
                     let temp = blankStr.replace(/\s/g, '');
@@ -74,7 +85,9 @@ $(document).ready(function () {
                         'color': 'red',
                         'text-decoration': 'line-through'
                     });
-                    guessIndicator.text("You have " + guessCounter + " more wrong guesses");
+                    fruitPic.attr('src', 'assets/images/froot-' + guessCounter + '.jpeg')
+                    imgs.append(fruitPic);
+                    // guessIndicator.text("You have " + guessCounter + " more wrong guesses");
                 }
             } else {
                 // engages loss state
@@ -95,7 +108,7 @@ $(document).ready(function () {
         if (!wrongGuesses.includes(guess)) {
             wrongGuesses.push(guess);
             if (targetWord.indexOf(guess) === -1) {
-                guessCounter -= 1;
+                guessCounter += 1;
             }
         }
     }
@@ -103,12 +116,14 @@ $(document).ready(function () {
     function reset() {
         targetWord = wordList[Math.floor(Math.random() * wordList.length)];
         blankStr = "";
-        guessCounter = 5;
+        guessCounter = 0;
         wrongGuesses = [];
         for (let i = 0; i < targetWord.length; i++) {
             blankStr = blankStr + "_ ";
         }
-        $('.character').removeAttr('style')
+        $('.character').removeAttr('style');
+        fruitPic.attr('src', 'assets/images/froot-' + guessCounter + '.jpeg')
+        imgs.append(fruitPic);
         blankSpace.text(blankStr);
         guessIndicator.text("You have " + guessCounter + " more wrong guesses");
     }
