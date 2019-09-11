@@ -96,7 +96,7 @@ $(document).ready(function () {
                     'color': 'red',
                     'text-decoration': 'line-through'
                 });
-                guessIndicator.text("You have " + guessCounter + " more wrong guesses");
+                fruitPic.attr('src', 'assets/images/froot-' + guessCounter + '.jpeg')
                 alert("Ya lost!");
                 reset();
             }

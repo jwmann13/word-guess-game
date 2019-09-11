@@ -2,3 +2,7 @@ body {
     height: 100vh;
     background-image: linear-gradient(#f5d5d5f0 49.5%, #df7266 49.2%);
 }
+
+img {
+    opacity: 10%;
+}
