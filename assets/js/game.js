@@ -20,10 +20,11 @@ $(document).ready(function () {
     }
 
     let fruitPic = $('<img>');
-    fruitPic.addClass('img-responsive');
+    fruitPic.addClass('img-fluid');
     fruitPic.css({
         'width': '100%',
-        'height': 'auto'
+        'height': 'auto',
+        'opacity': 1
     });
     fruitPic.attr('src', 'assets/images/froot-' + guessCounter + '.jpeg')
     imgs.append(fruitPic);
