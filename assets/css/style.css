@@ -2,3 +2,12 @@ body {
     height: 100vh;
     background-image: linear-gradient(#F9D2D2 49.5%, #ED695F 49.2%);
 }
+
+.character {
+    font-size: 32px;
+    cursor: pointer;
+}
+
+.character:hover {
+    font-weight: bold;
+}

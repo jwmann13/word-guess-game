@@ -1,133 +1,184 @@
-$(document).ready(function () {
-    // Initialize list of words, pick random word from list
-    const wordList = ["orange", "apple", "banana", "grape", "pineapple", "kumquat", "kiwi", "tangerine", "pear", "fig", "tomato", "pomegranate", "apricot", "blueberry", "strawberry"];
-    let targetWord = wordList[Math.floor(Math.random() * wordList.length)];
-    const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+$(document).ready(function() {
+  // Initialize list of words, pick random word from list
+  const wordList = [
+    "orange",
+    "apple",
+    "banana",
+    "grape",
+    "pineapple",
+    "kumquat",
+    "kiwi",
+    "tangerine",
+    "pear",
+    "fig",
+    "tomato",
+    "pomegranate",
+    "apricot",
+    "blueberry",
+    "strawberry"
+  ];
+  let targetWord = wordList[Math.floor(Math.random() * wordList.length)];
+  const letters = [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z"
+  ];
 
-    // Grab div to hold the user interfacing text
-    const blankSpace = $(".blanks");
-    const guessIndicator = $(".guess-number");
-    const imgs = $(".images");
+  // Grab divs to hold the user interfacing text
+  const blankSpace = $(".blanks");
+  const imgs = $(".images");
 
-    // Set up dynamic variables to hold background data
-    let blankStr = "";
-    let guessCounter = 0;
-    let wrongGuesses = [];
+  // Set up dynamic variables to hold background data
+  let blankStr = "";
+  let guessCounter = 0;
+  let wrongGuesses = [];
 
-    // fill blank string with dashes(as place holders) and spaces(for legibility);
-    for (let i = 0; i < targetWord.length; i++) {
-        blankStr = blankStr + "_ ";
-    }
+  // fill blank string with dashes(as place holders) and spaces(for legibility);
+  for (let i = 0; i < targetWord.length; i++) {
+    blankStr = blankStr + "_ ";
+  }
 
-    let fruitPic = $('<img>');
-    fruitPic.addClass('img-fluid');
-    fruitPic.css({
-        'width': '100%',
-        'height': 'auto',
-        'opacity': 1
-    });
-    fruitPic.attr('src', 'assets/images/froot-' + guessCounter + '.jpeg')
-    imgs.append(fruitPic);
+  // Set the picture indicator to the next image on wrong guesses
+  let fruitPic = $("<img>");
+  fruitPic.addClass("img-fluid");
+  fruitPic.css({
+    width: "100%",
+    height: "auto",
+    opacity: 1
+  });
+  fruitPic.attr("src", "assets/images/froot-" + guessCounter + ".jpeg");
+  imgs.append(fruitPic);
 
-    //  create letter indicators to html;
-    for (let i = 0; i < letters.length; i++) {
-        var letterDisplay = $("<div>");
-        letterDisplay.addClass("lead col-2 character");
-        letterDisplay.attr("data-letter", letters[i], "style", "font-size: 32px")
-        letterDisplay.text(letters[i]);
-        $(".letters").append(letterDisplay);
-    }
-    // show those on page;
-    blankSpace.text(blankStr);
-    // guessIndicator.text("You have " + guessCounter + " more wrong guesses");
+  //  create letter indicators to html;
+  for (let i = 0; i < letters.length; i++) {
+    var letterDisplay = $("<div>");
+    letterDisplay.addClass("lead col-2 character");
+    letterDisplay.attr("data-letter", letters[i]);
+    letterDisplay.text(letters[i]);
+    $(".letters").append(letterDisplay);
+  }
+  // show those on page;
+  blankSpace.text(blankStr);
 
-    // main user interaction function
-    $(document).keyup(function (event) {
-        let userGuess = event.key;
+  // main user interaction function
+  $(document).keyup(function(event) {
+    handleGuess(event.key.toLowerCase());
+  });
 
-        // handles non letter key presses
-        if (letters.includes(userGuess.toUpperCase())) {
-            // handles play vs loss state
-            if (guessCounter < 5) {
-                if (targetWord.indexOf(userGuess) != -1) {
-                    // hold temporary string of correctly guessed letters and dashes with no spaces
-                    let temp = blankStr.replace(/\s/g, '');
-                    // reset blank string
-                    blankStr = "";
-                    // refill blank string with dashes for un-guessed letters(dahses) and correctly guessed letters(userGuess)
-                    for (let i = 0; i < targetWord.length; i++) {
-                        // guess is correct, write to string
-                        if (targetWord[i] === userGuess) {
-                            blankStr = blankStr + userGuess + " ";
-                            // guess is incorrect, write a dash
-                        } else if (targetWord[i] != userGuess && temp[i] === "_") {
-                            blankStr = blankStr + "_ ";
-                            // letter is already in string, rewrite to string
-                        } else {
-                            blankStr = blankStr + temp[i] + " ";
-                        }
-                    }
-                    // correctly guessed letters made green and bold in alphabet interface
-                    $('[data-letter=' + userGuess.toUpperCase() + ']').css({
-                        'color': 'white',
-                        'font-weight': 'bold',
-                    });
-                    // write resulting string to page
-                    blankSpace.text(blankStr);
-                    // win state
-                    if (targetWord == blankStr.replace(/\s/g, '')) {
-                        alert("You Win!");
-                        reset();
-                    }
-                } else {
-                    guessCounterDown(userGuess);
-                    // incorrectly guessed letters made red and struckthrough in alphabet interface
-                    $('[data-letter=' + userGuess.toUpperCase() + ']').css({
-                        'color': 'red',
-                        'text-decoration': 'line-through'
-                    });
-                    fruitPic.attr('src', 'assets/images/froot-' + guessCounter + '.jpeg')
-                    imgs.append(fruitPic);
-                    // guessIndicator.text("You have " + guessCounter + " more wrong guesses");
-                }
+  $(".letters").on("click", ".character", function(event) {
+    handleGuess(
+      $(this)
+        .data("letter")
+        .toLowerCase()
+    );
+  });
+
+  function handleGuess(guess) {
+    // handles non letter key presses
+    if (letters.includes(guess.toUpperCase())) {
+      // handles play vs loss state
+      if (guessCounter < 5) {
+        if (targetWord.indexOf(guess) != -1) {
+          // hold temporary string of correctly guessed letters and dashes with no spaces
+          let temp = blankStr.replace(/\s/g, "");
+          // reset blank string
+          blankStr = "";
+          // refill blank string with dashes for un-guessed letters(dashes) and correctly guessed letters(guess)
+          for (let i = 0; i < targetWord.length; i++) {
+            // guess is correct, write to string
+            if (targetWord[i] === guess) {
+              blankStr = blankStr + guess + " ";
+              // guess is incorrect, write a dash
+            } else if (targetWord[i] != guess && temp[i] === "_") {
+              blankStr = blankStr + "_ ";
+              // letter is already in string, rewrite to string
             } else {
-                // engages loss state
-                guessCounterDown(userGuess);
-                $('[data-letter=' + userGuess.toUpperCase() + ']').css({
-                    'color': 'red',
-                    'text-decoration': 'line-through'
-                });
-                fruitPic.attr('src', 'assets/images/froot-' + guessCounter + '.jpeg')
-                alert("Ya lost!");
-                reset();
+              blankStr = blankStr + temp[i] + " ";
             }
+          }
+          // correctly guessed letters made white and bold in alphabet interface
+          $("[data-letter=" + guess.toUpperCase() + "]").css({
+            color: "white",
+            "font-weight": "bold"
+          });
+          // write resulting string to page
+          blankSpace.text(blankStr);
+          // win state
+          if (targetWord == blankStr.replace(/\s/g, "")) {
+            alert("You Win!");
+            reset();
+          }
+        } else {
+          guessCounterDown(guess);
+          // incorrectly guessed letters made red and struckthrough in alphabet interface
+          $("[data-letter=" + guess.toUpperCase() + "]").css({
+            color: "red",
+            "text-decoration": "line-through"
+          });
+          fruitPic.attr("src", "assets/images/froot-" + guessCounter + ".jpeg");
+          imgs.append(fruitPic);
         }
-    });
-
-    // function to count down wrong guesses
-    function guessCounterDown(guess) {
-        if (!wrongGuesses.includes(guess)) {
-            wrongGuesses.push(guess);
-            if (targetWord.indexOf(guess) === -1) {
-                guessCounter += 1;
-            }
-        }
+      } else {
+        // engages loss state
+        guessCounterDown(guess);
+        $("[data-letter=" + guess.toUpperCase() + "]").css({
+          color: "red",
+          "text-decoration": "line-through"
+        });
+        fruitPic.attr("src", "assets/images/froot-" + guessCounter + ".jpeg");
+        alert("Ya lost!");
+        reset();
+      }
     }
+  }
 
-    function reset() {
-        targetWord = wordList[Math.floor(Math.random() * wordList.length)];
-        blankStr = "";
-        guessCounter = 0;
-        wrongGuesses = [];
-        for (let i = 0; i < targetWord.length; i++) {
-            blankStr = blankStr + "_ ";
-        }
-        $('.character').removeAttr('style');
-        fruitPic.attr('src', 'assets/images/froot-' + guessCounter + '.jpeg')
-        imgs.append(fruitPic);
-        blankSpace.text(blankStr);
-        guessIndicator.text("You have " + guessCounter + " more wrong guesses");
+  // function to count down wrong guesses
+  function guessCounterDown(guess) {
+    if (!wrongGuesses.includes(guess)) {
+      wrongGuesses.push(guess);
+      if (targetWord.indexOf(guess) === -1) {
+        guessCounter += 1;
+      }
     }
+  }
+
+  // resets the game state to beginning
+  function reset() {
+    targetWord = wordList[Math.floor(Math.random() * wordList.length)];
+    blankStr = "";
+    guessCounter = 0;
+    wrongGuesses = [];
+    for (let i = 0; i < targetWord.length; i++) {
+      blankStr = blankStr + "_ ";
+    }
+    $(".character").removeAttr("style");
+    fruitPic.attr("src", "assets/images/froot-" + guessCounter + ".jpeg");
+    imgs.append(fruitPic);
+    blankSpace.text(blankStr);
+  }
 });
 
 // Pseudocode
